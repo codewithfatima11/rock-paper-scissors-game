@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rock Paper Scissors Selector</title>
+  <title>Rock Paper Scissors Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #014d4d; /* Keep your dark teal background */
+      background-color: #014d4d;
       color: #fff;
       margin: 0;
-      padding: 50px;
+      padding-top: 100px;
+      overflow-x: hidden;
     }
 
     h1 {
-      color: #fff;
-      margin-bottom: 30px;
+      margin-bottom: 50px;
     }
 
     .hands {
       display: flex;
       justify-content: center;
       gap: 40px;
+      margin-top: 50px;
+      position: relative;
     }
 
     .hand {
@@ -28,29 +30,47 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: transform 0.3s, font-size 0.3s, opacity 0.3s;
-      font-size: 70px; /* Slightly bigger hands */
+      font-size: 70px;
+      position: relative;
+      transition: all 0.8s ease; /* Smooth animation */
     }
 
     .hand p {
       margin-top: 10px;
       font-weight: bold;
-      color: #fff;
       font-size: 20px;
-      transition: transform 0.3s;
-    }
-
-    .selected {
-      transform: scale(1.8); /* Make selected hand bigger */
-    }
-
-    .selected p {
-      transform: scale(1.2); /* Slightly bigger text */
+      transition: all 0.8s ease;
     }
 
     .hidden {
       opacity: 0;
-      pointer-events: none; /* Make it unclickable */
+      pointer-events: none;
+    }
+
+    .selected {
+      transform: scale(2);
+      z-index: 10;
+    }
+
+    .selected p {
+      transform: scale(1.2);
+    }
+
+    .result {
+      margin-top: 50px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .play-again {
+      margin-top: 30px;
+      font-size: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #00ff00;
+      border: none;
+      border-radius: 5px;
+      display: none;
     }
   </style>
 </head>
@@ -58,36 +78,79 @@
 
   <h1>Choose your hand</h1>
 
-  <div class="hands">
-    <div class="hand" onclick="selectHand(this)">
+  <div class="hands" id="handsContainer">
+    <div class="hand" onclick="selectHand(this, 'Rock')">
       ✊
       <p>Rock</p>
     </div>
-    <div class="hand" onclick="selectHand(this)">
+    <div class="hand" onclick="selectHand(this, 'Scissors')">
       ✌️
       <p>Scissors</p>
     </div>
-    <div class="hand" onclick="selectHand(this)">
+    <div class="hand" onclick="selectHand(this, 'Paper')">
       ✋
       <p>Paper</p>
     </div>
   </div>
 
+  <div class="result" id="result"></div>
+  <button class="play-again" id="playAgainBtn" onclick="resetGame()">Play Again</button>
+
   <script>
-    function selectHand(selected) {
-      // Hide other hands
-      document.querySelectorAll('.hand').forEach(hand => {
-        if(hand !== selected) {
-          hand.classList.add('hidden');
-        } else {
-          hand.classList.add('selected'); // Enlarge selected hand
+    function selectHand(selected, playerChoice) {
+      const hands = document.querySelectorAll('.hand');
+      const container = document.getElementById('handsContainer');
+
+      const containerRect = container.getBoundingClientRect();
+      const handRect = selected.getBoundingClientRect();
+      const targetX = containerRect.left + containerRect.width / 2 - handRect.width / 2 - handRect.left;
+
+      hands.forEach(hand => {
+        if(hand !== selected) hand.classList.add('hidden');
+        else {
+          hand.classList.add('selected');
+          hand.style.transform += ` translateX(${targetX}px)`; // Smoothly move to center
+          const windowCenterY = window.innerHeight / 2 - handRect.height / 2;
+          hand.style.top = windowCenterY - handRect.top + "px";
         }
       });
+
+      // Computer choice
+      const options = ['Rock', 'Paper', 'Scissors'];
+      const computerChoice = options[Math.floor(Math.random() * 3)];
+
+      // Determine result
+      let resultText = '';
+      if(playerChoice === computerChoice) resultText = "It's a tie!";
+      else if(
+        (playerChoice === 'Rock' && computerChoice === 'Scissors') ||
+        (playerChoice === 'Scissors' && computerChoice === 'Paper') ||
+        (playerChoice === 'Paper' && computerChoice === 'Rock')
+      ) resultText = "You won!";
+      else resultText = "You lost!";
+
+      document.getElementById('result').textContent = 
+        `Computer chose ${computerChoice}. ${resultText}`;
+
+      document.getElementById('playAgainBtn').style.display = 'inline-block';
+    }
+
+    function resetGame() {
+      const hands = document.querySelectorAll('.hand');
+      hands.forEach(hand => {
+        hand.classList.remove('hidden');
+        hand.classList.remove('selected');
+        hand.style.top = '0px';
+        hand.style.transform = 'scale(1)';
+      });
+      document.getElementById('result').textContent = '';
+      document.getElementById('playAgainBtn').style.display = 'none';
     }
   </script>
 
 </body>
 </html>
+
 
 
 
