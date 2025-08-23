@@ -6,7 +6,7 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #014d4d; /* Dark teal background */
+      background-color: #014d4d; /* Keep your dark teal background */
       color: #fff;
       margin: 0;
       padding: 50px;
@@ -17,12 +17,6 @@
       margin-bottom: 30px;
     }
 
-    .preview {
-      font-size: 100px; /* Bigger preview */
-      margin-bottom: 40px;
-      height: 120px; /* Reserve space even if nothing selected yet */
-    }
-
     .hands {
       display: flex;
       justify-content: center;
@@ -31,34 +25,38 @@
 
     .hand {
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 50px; /* Medium size hands */
+      transition: transform 0.3s, font-size 0.3s, opacity 0.3s;
+      font-size: 70px; /* Slightly bigger hands */
     }
 
     .hand p {
       margin-top: 10px;
       font-weight: bold;
       color: #fff;
-      font-size: 18px;
+      font-size: 20px;
+      transition: transform 0.3s;
     }
 
     .selected {
-      transform: scale(1.3);
-      border: 2px solid #00ff00;
-      padding: 5px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+      transform: scale(1.8); /* Make selected hand bigger */
+    }
+
+    .selected p {
+      transform: scale(1.2); /* Slightly bigger text */
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none; /* Make it unclickable */
     }
   </style>
 </head>
 <body>
 
   <h1>Choose your hand</h1>
-  
-  <div class="preview" id="preview"></div> <!-- Selected hand will show here -->
 
   <div class="hands">
     <div class="hand" onclick="selectHand(this)">
@@ -77,16 +75,14 @@
 
   <script>
     function selectHand(selected) {
-      // Remove selection from all hands
+      // Hide other hands
       document.querySelectorAll('.hand').forEach(hand => {
-        hand.classList.remove('selected');
+        if(hand !== selected) {
+          hand.classList.add('hidden');
+        } else {
+          hand.classList.add('selected'); // Enlarge selected hand
+        }
       });
-
-      // Add selection to clicked hand
-      selected.classList.add('selected');
-
-      // Show the selected hand in the preview above
-      document.getElementById('preview').textContent = selected.textContent.trim();
     }
   </script>
 
@@ -94,6 +90,4 @@
 </html>
 
 
-</body>
-</html>
 
