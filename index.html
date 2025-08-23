@@ -6,14 +6,21 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #ffe4b5; /* Unique light orange background */
+      background-color: #014d4d; /* Dark teal background */
+      color: #fff;
       margin: 0;
       padding: 50px;
     }
 
     h1 {
-      color: #333;
+      color: #fff;
+      margin-bottom: 30px;
+    }
+
+    .preview {
+      font-size: 100px; /* Bigger preview */
       margin-bottom: 40px;
+      height: 120px; /* Reserve space even if nothing selected yet */
     }
 
     .hands {
@@ -28,43 +35,42 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    .hand img {
-      width: 80px;  /* Medium size */
-      height: 80px;
-      border-radius: 10px;
+      font-size: 50px; /* Medium size hands */
     }
 
     .hand p {
       margin-top: 10px;
       font-weight: bold;
-      color: #222;
+      color: #fff;
+      font-size: 18px;
     }
 
     .selected {
-      transform: scale(1.2);
-      border: 2px solid green;
+      transform: scale(1.3);
+      border: 2px solid #00ff00;
       padding: 5px;
-      box-shadow: 0 0 15px rgba(0, 128, 0, 0.6);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
     }
   </style>
 </head>
 <body>
 
   <h1>Choose your hand</h1>
+  
+  <div class="preview" id="preview"></div> <!-- Selected hand will show here -->
 
   <div class="hands">
     <div class="hand" onclick="selectHand(this)">
-      <img src="rock.png" alt="Rock">
+      ✊
       <p>Rock</p>
     </div>
     <div class="hand" onclick="selectHand(this)">
-      <img src="scissors.png" alt="Scissors">
+      ✌️
       <p>Scissors</p>
     </div>
     <div class="hand" onclick="selectHand(this)">
-      <img src="paper.png" alt="Paper">
+      ✋
       <p>Paper</p>
     </div>
   </div>
@@ -78,8 +84,15 @@
 
       // Add selection to clicked hand
       selected.classList.add('selected');
+
+      // Show the selected hand in the preview above
+      document.getElementById('preview').textContent = selected.textContent.trim();
     }
   </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
