@@ -1,38 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Rock Paper Scissors</title>
+  <title>Rock Paper Scissors Selector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #ffe4b5; /* Unique light orange background */
+      margin: 0;
+      padding: 50px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    .hands {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .hand {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hand img {
+      width: 80px;  /* Medium size */
+      height: 80px;
+      border-radius: 10px;
+    }
+
+    .hand p {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .selected {
+      transform: scale(1.2);
+      border: 2px solid green;
+      padding: 5px;
+      box-shadow: 0 0 15px rgba(0, 128, 0, 0.6);
+    }
+  </style>
 </head>
 <body>
-  <h1>Rock Paper Scissors ✊📄✂️</h1>
 
-  <button onclick="play('rock')">Rock ✊</button>
-  <button onclick="play('paper')">Paper 📄</button>
-  <button onclick="play('scissors')">Scissors ✂️</button>
+  <h1>Choose your hand</h1>
 
-  <h2 id="result">Make your move!</h2>
+  <div class="hands">
+    <div class="hand" onclick="selectHand(this)">
+      <img src="rock.png" alt="Rock">
+      <p>Rock</p>
+    </div>
+    <div class="hand" onclick="selectHand(this)">
+      <img src="scissors.png" alt="Scissors">
+      <p>Scissors</p>
+    </div>
+    <div class="hand" onclick="selectHand(this)">
+      <img src="paper.png" alt="Paper">
+      <p>Paper</p>
+    </div>
+  </div>
 
   <script>
-    function play(userChoice) {
-      const choices = ['rock', 'paper', 'scissors'];
-      const computerChoice = choices[Math.floor(Math.random() * 3)];
+    function selectHand(selected) {
+      // Remove selection from all hands
+      document.querySelectorAll('.hand').forEach(hand => {
+        hand.classList.remove('selected');
+      });
 
-      let result = '';
-      if (userChoice === computerChoice) {
-        result = "It's a tie! 🤝";
-      } else if (
-        (userChoice === 'rock' && computerChoice === 'scissors') ||
-        (userChoice === 'paper' && computerChoice === 'rock') ||
-        (userChoice === 'scissors' && computerChoice === 'paper')
-      ) {
-        result = `You win! 🎉 ${userChoice} beats ${computerChoice}`;
-      } else {
-        result = `You lose 😢 ${computerChoice} beats ${userChoice}`;
-      }
-
-      document.getElementById('result').innerText = result;
+      // Add selection to clicked hand
+      selected.classList.add('selected');
     }
   </script>
+
 </body>
 </html>
+
