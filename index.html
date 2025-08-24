@@ -8,10 +8,11 @@
   body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f0f0f0; /* Page background */
+    background-color: #014d4d; /* Kept your background */
     margin: 0;
     overflow-x: hidden;
     position: relative;
+    color: white;
   }
 
   /* Start Button */
@@ -20,14 +21,12 @@
     font-size: 36px;
     color: white;
     background-color: #014d4d;
-    border: 3px solid #014d4d;
+    border: 3px solid white;
     border-radius: 12px;
     cursor: pointer;
     transition: 0.3s;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: block;
+    margin: 40vh auto; /* Keeps it centered vertically */
   }
 
   #startButton:hover {
@@ -39,7 +38,6 @@
   #gameContainer {
     display: none;
     padding-top: 50px;
-    color: #014d4d;
   }
 
   /* Timer at top right */
@@ -52,6 +50,7 @@
     color: white;
     padding: 5px 10px;
     border-radius: 8px;
+    border: 2px solid white;
     display: none;
   }
 
@@ -222,6 +221,4 @@ function resetGame() {
 
 </body>
 </html>
-
-
 
