@@ -1,171 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rock Paper Scissors</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #014d4d;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Paper Scissors</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #014d4d;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
 
-    #timer {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 24px;
-      display: none;
-    }
+  #timer {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    display: none;
+  }
 
-    #start-btn, #play-again {
-      background-color: transparent;
-      border: 2px solid white;
-      color: white;
-      padding: 15px 30px;
-      font-size: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+  button {
+    background-color: #014d4d;
+    border: 3px solid white;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 10px;
+  }
 
-    #start-btn:hover, #play-again:hover {
-      background-color: white;
-      color: #014d4d;
-    }
+  #startBtn {
+    font-size: 28px;
+    padding: 20px 50px;
+    margin-top: 0;
+  }
 
-    #choices {
-      margin: 50px 0;
-    }
+  #playAgainBtn {
+    font-size: 22px;
+    padding: 15px 40px;
+    display: none;
+  }
 
-    .choice {
-      font-size: 70px;
-      margin: 0 20px;
-      cursor: pointer;
-      display: inline-block;
-      transition: transform 0.2s;
-    }
+  #choices {
+    display: none;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+  }
 
-    .choice:hover {
-      transform: scale(1.2);
-    }
+  .choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
 
-    #result, #outcome {
-      margin-top: 20px;
-      font-size: 22px;
-    }
+  .choice span.emoji {
+    font-size: 80px; /* bigger emojis */
+  }
 
-    #play-again {
-      display: none;
-      margin-top: 40px;
-    }
-  </style>
+  .choice span.label {
+    font-size: 20px; /* normal text size */
+    margin-top: 10px;
+  }
+
+  #result, #outcome {
+    display: none;
+    margin-top: 20px;
+  }
+
+  #outcome {
+    font-size: 26px;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
-  <div id="timer">00:30</div>
-  <button id="start-btn">START</button>
 
-  <div id="game" style="display: none;">
-    <div id="choices">
-      <span class="choice" data-choice="rock">✊</span>
-      <span class="choice" data-choice="paper">✋</span>
-      <span class="choice" data-choice="scissors">✌</span>
-    </div>
-    <div id="result"></div>
-    <div id="outcome"></div>
-    <button id="play-again">Play Again</button>
+<div id="timer">00:30</div>
+<button id="startBtn">START</button>
+
+<div id="choices">
+  <div class="choice" id="rockChoice">
+    <span class="emoji">✊</span>
+    <span class="label">Rock</span>
   </div>
+  <div class="choice" id="paperChoice">
+    <span class="emoji">✋</span>
+    <span class="label">Paper</span>
+  </div>
+  <div class="choice" id="scissorsChoice">
+    <span class="emoji">✌</span>
+    <span class="label">Scissors</span>
+  </div>
+</div>
 
-  <script>
-    const startBtn = document.getElementById("start-btn");
-    const game = document.getElementById("game");
-    const choices = document.querySelectorAll(".choice");
-    const result = document.getElementById("result");
-    const outcome = document.getElementById("outcome");
-    const timerDisplay = document.getElementById("timer");
-    const playAgainBtn = document.getElementById("play-again");
+<div id="result"></div>
+<div id="outcome"></div>
+<button id="playAgainBtn">PLAY AGAIN</button>
 
-    let timer;
-    let timeLeft = 30;
+<script>
+const startBtn = document.getElementById("startBtn");
+const playAgainBtn = document.getElementById("playAgainBtn");
+const timer = document.getElementById("timer");
+const choices = document.getElementById("choices");
+const result = document.getElementById("result");
+const outcome = document.getElementById("outcome");
 
-    function startGame() {
-      startBtn.style.display = "none";
-      game.style.display = "block";
-      timerDisplay.style.display = "block";
-      resetTimer();
+let countdown;
+let timeLeft = 30;
+
+function startCountdown() {
+  timer.style.display = "block";
+  countdown = setInterval(() => {
+    timeLeft--;
+    timer.textContent = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      endGame("Time’s up!");
     }
+  }, 1000);
+}
 
-    function resetTimer() {
-      clearInterval(timer);
-      timeLeft = 30;
-      timerDisplay.textContent = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
-      timer = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          endGame("⏰ Time's up! No winner.");
-        }
-      }, 1000);
-    }
+function startGame() {
+  startBtn.style.display = "none";
+  choices.style.display = "flex";
+  result.style.display = "none";
+  outcome.style.display = "none";
+  playAgainBtn.style.display = "none";
+  timeLeft = 30;
+  timer.textContent = "00:30";
+  startCountdown();
+}
 
-    function playRound(playerChoice) {
-      const computerChoices = ["rock", "paper", "scissors"];
-      const computerChoice = computerChoices[Math.floor(Math.random() * 3)];
+function play(choice) {
+  const options = ["Rock", "Paper", "Scissors"];
+  const computerChoice = options[Math.floor(Math.random() * 3)];
+  result.style.display = "block";
+  result.textContent = `You chose ${choice} | Computer chose ${computerChoice}`;
 
-      // Hide unselected emojis
-      choices.forEach(choice => {
-        if (choice.dataset.choice !== playerChoice) {
-          choice.style.display = "none";
-        }
-      });
+  let message;
+  if (choice === computerChoice) message = "It’s a Tie";
+  else if (
+    (choice === "Rock" && computerChoice === "Scissors") ||
+    (choice === "Paper" && computerChoice === "Rock") ||
+    (choice === "Scissors" && computerChoice === "Paper")
+  ) message = "You Won";
+  else message = "You Lost";
 
-      result.textContent = `You chose ${playerChoice} | Computer chose ${computerChoice}`;
+  outcome.style.display = "block";
+  outcome.textContent = message;
 
-      if (playerChoice === computerChoice) {
-        outcome.textContent = "It's a Tie!";
-      } else if (
-        (playerChoice === "rock" && computerChoice === "scissors") ||
-        (playerChoice === "paper" && computerChoice === "rock") ||
-        (playerChoice === "scissors" && computerChoice === "paper")
-      ) {
-        outcome.textContent = "🎉 You Won!";
-      } else {
-        outcome.textContent = "😢 You Lost!";
-      }
+  choices.style.display = "none";
+  timer.style.display = "none";
+  playAgainBtn.style.display = "inline-block";
+  clearInterval(countdown);
+}
 
-      endGame();
-    }
+function endGame(msg) {
+  outcome.style.display = "block";
+  outcome.textContent = msg;
+  choices.style.display = "none";
+  timer.style.display = "none";
+  playAgainBtn.style.display = "inline-block";
+}
 
-    function endGame(message = null) {
-      clearInterval(timer);
-      timerDisplay.style.display = "none";
-      if (message) {
-        outcome.textContent = message;
-      }
-      playAgainBtn.style.display = "inline-block";
-    }
+startBtn.addEventListener("click", startGame);
 
-    function resetGame() {
-      result.textContent = "";
-      outcome.textContent = "";
-      choices.forEach(choice => {
-        choice.style.display = "inline-block";
-      });
-      playAgainBtn.style.display = "none";
-      startBtn.style.display = "block";
-      game.style.display = "none";
-    }
+playAgainBtn.addEventListener("click", () => {
+  location.reload(); // reload page to reset everything
+});
 
-    startBtn.addEventListener("click", startGame);
-    choices.forEach(choice => {
-      choice.addEventListener("click", () => playRound(choice.dataset.choice));
-    });
-    playAgainBtn.addEventListener("click", resetGame);
-  </script>
+document.getElementById("rockChoice").addEventListener("click", () => play("Rock"));
+document.getElementById("paperChoice").addEventListener("click", () => play("Paper"));
+document.getElementById("scissorsChoice").addEventListener("click", () => play("Scissors"));
+</script>
+
 </body>
 </html>
+
