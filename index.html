@@ -3,194 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rock Paper Scissors Game</title>
+  <title>Rock Paper Scissors</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #014d4d;
+      color: white;
       text-align: center;
-      background-color: #fddde6; /* Baby pink */
       margin: 0;
       padding: 0;
     }
 
-    #startScreen {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #fddde6;
-    }
-
-    #startBtn {
-      background-color: #014d4d;
-      color: white;
-      border: 2px solid #014d4d;
-      padding: 20px 40px;
-      font-size: 28px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    #gameScreen {
-      display: none;
-      padding: 20px;
-    }
-
     #timer {
-      font-size: 24px;
-      font-weight: bold;
       position: absolute;
       top: 20px;
-      right: 30px;
+      right: 20px;
+      font-size: 24px;
       display: none;
+    }
+
+    #start-btn, #play-again {
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 15px 30px;
+      font-size: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #start-btn:hover, #play-again:hover {
+      background-color: white;
       color: #014d4d;
     }
 
-    .hands {
-      display: flex;
-      justify-content: center;
-      margin: 30px 0;
+    #choices {
+      margin: 50px 0;
     }
 
-    .hand {
-      font-size: 90px;
+    .choice {
+      font-size: 70px;
+      margin: 0 20px;
       cursor: pointer;
-      margin: 0 30px;
-      transition: transform 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: inline-block;
+      transition: transform 0.2s;
     }
 
-    .hand span {
-      font-size: 28px;
-      margin-top: 8px;
+    .choice:hover {
+      transform: scale(1.2);
     }
 
-    .hand:hover {
-      transform: scale(1.1);
-    }
-
-    #result {
-      font-size: 26px;
-      font-weight: bold;
+    #result, #outcome {
       margin-top: 20px;
-      color: #333;
+      font-size: 22px;
     }
 
-    #playAgain {
+    #play-again {
       display: none;
-      margin-top: 25px;
-      padding: 12px 28px;
-      font-size: 22px;
-      background-color: #014d4d;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
+  <div id="timer">00:30</div>
+  <button id="start-btn">START</button>
 
-  <div id="startScreen">
-    <button id="startBtn" onclick="startGame()">Start Game</button>
-  </div>
-
-  <div id="gameScreen">
-    <div id="timer">00:30</div>
-
-    <h1>Rock Paper Scissors</h1>
-    <div class="hands">
-      <div class="hand" onclick="play('Rock')">✊<span>Rock</span></div>
-      <div class="hand" onclick="play('Paper')">✋<span>Paper</span></div>
-      <div class="hand" onclick="play('Scissors')">✌️<span>Scissors</span></div>
+  <div id="game" style="display: none;">
+    <div id="choices">
+      <span class="choice" data-choice="rock">✊</span>
+      <span class="choice" data-choice="paper">✋</span>
+      <span class="choice" data-choice="scissors">✌</span>
     </div>
-
-    <p id="result"></p>
-    <button id="playAgain" onclick="playAgain()">Play Again</button>
+    <div id="result"></div>
+    <div id="outcome"></div>
+    <button id="play-again">Play Again</button>
   </div>
 
   <script>
-    let timerDisplay = document.getElementById("timer");
-    let resultDisplay = document.getElementById("result");
-    let playAgainBtn = document.getElementById("playAgain");
-    let timerInterval;
+    const startBtn = document.getElementById("start-btn");
+    const game = document.getElementById("game");
+    const choices = document.querySelectorAll(".choice");
+    const result = document.getElementById("result");
+    const outcome = document.getElementById("outcome");
+    const timerDisplay = document.getElementById("timer");
+    const playAgainBtn = document.getElementById("play-again");
+
+    let timer;
     let timeLeft = 30;
 
     function startGame() {
-      document.getElementById("startScreen").style.display = "none";
-      document.getElementById("gameScreen").style.display = "block";
-      startTimer();
+      startBtn.style.display = "none";
+      game.style.display = "block";
+      timerDisplay.style.display = "block";
+      resetTimer();
     }
 
-    function startTimer() {
-      timerDisplay.style.display = "block";
+    function resetTimer() {
+      clearInterval(timer);
       timeLeft = 30;
-      timerDisplay.textContent = "00:30";
-
-      timerInterval = setInterval(() => {
+      timerDisplay.textContent = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
+      timer = setInterval(() => {
         timeLeft--;
-        let seconds = timeLeft < 10 ? "0" + timeLeft : timeLeft;
-        timerDisplay.textContent = "00:" + seconds;
-
+        timerDisplay.textContent = `00:${timeLeft < 10 ? "0" + timeLeft : timeLeft}`;
         if (timeLeft <= 0) {
-          endGame();
+          clearInterval(timer);
+          endGame("⏰ Time's up! No winner.");
         }
       }, 1000);
     }
 
-    function play(playerChoice) {
-      let choices = ["Rock", "Paper", "Scissors"];
-      let computerChoice = choices[Math.floor(Math.random() * 3)];
+    function playRound(playerChoice) {
+      const computerChoices = ["rock", "paper", "scissors"];
+      const computerChoice = computerChoices[Math.floor(Math.random() * 3)];
 
-      let result = "";
-
-      if (playerChoice === computerChoice) {
-        result = "Draw! Both chose " + playerChoice;
-      } else if (
-        (playerChoice === "Rock" && computerChoice === "Scissors") ||
-        (playerChoice === "Paper" && computerChoice === "Rock") ||
-        (playerChoice === "Scissors" && computerChoice === "Paper")
-      ) {
-        result = "You won! Computer chose " + computerChoice;
-      } else {
-        result = "You lost! Computer chose " + computerChoice;
-      }
-
-      resultDisplay.textContent = result;
-      // hide other two hands
-      document.querySelectorAll(".hand").forEach(hand => {
-        if (!hand.textContent.includes(playerChoice)) {
-          hand.style.display = "none";
+      // Hide unselected emojis
+      choices.forEach(choice => {
+        if (choice.dataset.choice !== playerChoice) {
+          choice.style.display = "none";
         }
       });
 
-      // stop timer when a choice is made
-      clearInterval(timerInterval);
-      timerDisplay.style.display = "none";
+      result.textContent = `You chose ${playerChoice} | Computer chose ${computerChoice}`;
 
-      playAgainBtn.style.display = "block";
+      if (playerChoice === computerChoice) {
+        outcome.textContent = "It's a Tie!";
+      } else if (
+        (playerChoice === "rock" && computerChoice === "scissors") ||
+        (playerChoice === "paper" && computerChoice === "rock") ||
+        (playerChoice === "scissors" && computerChoice === "paper")
+      ) {
+        outcome.textContent = "🎉 You Won!";
+      } else {
+        outcome.textContent = "😢 You Lost!";
+      }
+
+      endGame();
     }
 
-    function endGame() {
-      clearInterval(timerInterval);
+    function endGame(message = null) {
+      clearInterval(timer);
       timerDisplay.style.display = "none";
-      resultDisplay.textContent = "⏰ Time’s up! Game over.";
-      playAgainBtn.style.display = "block";
+      if (message) {
+        outcome.textContent = message;
+      }
+      playAgainBtn.style.display = "inline-block";
     }
 
-    function playAgain() {
-      playAgainBtn.style.display = "none";
-      resultDisplay.textContent = "";
-
-      document.querySelectorAll(".hand").forEach(hand => {
-        hand.style.display = "flex"; // show all again
+    function resetGame() {
+      result.textContent = "";
+      outcome.textContent = "";
+      choices.forEach(choice => {
+        choice.style.display = "inline-block";
       });
-
-      startGame();
+      playAgainBtn.style.display = "none";
+      startBtn.style.display = "block";
+      game.style.display = "none";
     }
+
+    startBtn.addEventListener("click", startGame);
+    choices.forEach(choice => {
+      choice.addEventListener("click", () => playRound(choice.dataset.choice));
+    });
+    playAgainBtn.addEventListener("click", resetGame);
   </script>
 </body>
 </html>
-
