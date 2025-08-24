@@ -1,224 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rock Paper Scissors Game</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #014d4d; /* Kept your background */
-    margin: 0;
-    overflow-x: hidden;
-    position: relative;
-    color: white;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #004d4d;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Start Button */
-  #startButton {
-    padding: 20px 50px;
-    font-size: 36px;
-    color: white;
-    background-color: #014d4d;
-    border: 3px solid white;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-    display: block;
-    margin: 40vh auto; /* Keeps it centered vertically */
-  }
+    #startScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  #startButton:hover {
-    background-color: white;
-    color: #014d4d;
-  }
+    #startBtn {
+      padding: 20px 40px;
+      font-size: 28px;
+      color: white;
+      background-color: transparent;
+      border: 4px solid white;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-  /* Game container hidden initially */
-  #gameContainer {
-    display: none;
-    padding-top: 50px;
-  }
+    #startBtn:hover {
+      background-color: white;
+      color: #004d4d;
+    }
 
-  /* Timer at top right */
-  #timer {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    background-color: #014d4d;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 8px;
-    border: 2px solid white;
-    display: none;
-  }
+    #gameScreen {
+      display: none;
+      padding: 30px;
+    }
 
-  /* Game hands */
-  .hands {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 50px;
-    position: relative;
-  }
+    .hands {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin: 40px 0;
+    }
 
-  .hand {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 70px;
-    position: relative;
-    transition: all 0.8s ease;
-  }
+    .hand {
+      font-size: 80px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
 
-  .hand p {
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 20px;
-    transition: all 0.8s ease;
-  }
+    .hand:hover {
+      transform: scale(1.3);
+    }
 
-  .hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
+    .hand.selected {
+      font-size: 120px;
+      transform: scale(1.4);
+    }
 
-  .selected {
-    transform: scale(2);
-    z-index: 10;
-  }
+    #result {
+      margin-top: 30px;
+      font-size: 24px;
+      font-weight: bold;
+    }
 
-  .selected p {
-    transform: scale(1.2);
-  }
+    #playAgain {
+      margin-top: 20px;
+      padding: 12px 25px;
+      background-color: limegreen;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
 
-  .result {
-    margin-top: 50px;
-    font-size: 28px;
-    font-weight: bold;
-  }
-
-  .play-again {
-    margin-top: 30px;
-    font-size: 20px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #00ff00;
-    border: none;
-    border-radius: 5px;
-    display: none;
-  }
-</style>
+    #timer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      background: white;
+      color: #004d4d;
+      padding: 5px 12px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-
-<!-- Start Button -->
-<button id="startButton" onclick="startGame()">Start</button>
-
-<!-- Timer -->
-<div id="timer">00:30</div>
-
-<!-- Game Container -->
-<div id="gameContainer">
-  <h1>Choose your hand</h1>
-  <div class="hands" id="handsContainer">
-    <div class="hand" onclick="selectHand(this, 'Rock')">
-      ✊
-      <p>Rock</p>
-    </div>
-    <div class="hand" onclick="selectHand(this, 'Scissors')">
-      ✌️
-      <p>Scissors</p>
-    </div>
-    <div class="hand" onclick="selectHand(this, 'Paper')">
-      ✋
-      <p>Paper</p>
-    </div>
+  <div id="startScreen">
+    <button id="startBtn">Start</button>
   </div>
-  <div class="result" id="result"></div>
-  <button class="play-again" id="playAgainBtn" onclick="resetGame()">Play Again</button>
-</div>
 
-<script>
-let timerInterval;
-let timeLeft = 30;
+  <div id="gameScreen">
+    <div id="timer">00:30</div>
+    <h1>Choose your hand</h1>
+    <div class="hands">
+      <div class="hand" onclick="play('Rock', this)">✊<br>Rock</div>
+      <div class="hand" onclick="play('Paper', this)">✋<br>Paper</div>
+      <div class="hand" onclick="play('Scissors', this)">✌️<br>Scissors</div>
+    </div>
+    <div id="result"></div>
+    <button id="playAgain" onclick="resetGame()">Play Again</button>
+  </div>
 
-// Start Game
-function startGame() {
-  document.getElementById('startButton').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'block';
-  document.getElementById('timer').style.display = 'block';
-  timeLeft = 30;
-  document.getElementById('timer').textContent = '00:30';
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const startScreen = document.getElementById('startScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const resultDiv = document.getElementById('result');
+    const playAgainBtn = document.getElementById('playAgain');
+    const timerDiv = document.getElementById('timer');
+    let timer;
+    let timeLeft = 30;
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    let minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-    let seconds = String(timeLeft % 60).padStart(2, '0');
-    document.getElementById('timer').textContent = `${minutes}:${seconds}`;
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      alert("Time's up!");
-      resetGame();
+    startBtn.onclick = () => {
+      startScreen.style.display = 'none';
+      gameScreen.style.display = 'block';
+      startTimer();
+    };
+
+    function startTimer() {
+      timeLeft = 30;
+      timerDiv.textContent = "00:30";
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDiv.textContent = `00:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          resultDiv.textContent = "⏰ Time’s up!";
+          playAgainBtn.style.display = "block";
+          document.querySelectorAll(".hand").forEach(h => h.style.pointerEvents = "none");
+        }
+      }, 1000);
     }
-  }, 1000);
-}
 
-// Select hand
-function selectHand(selected, playerChoice) {
-  const hands = document.querySelectorAll('.hand');
-  const container = document.getElementById('handsContainer');
+    function play(userChoice, element) {
+      // Remove other hands
+      document.querySelectorAll(".hand").forEach(h => {
+        if (h !== element) {
+          h.style.display = "none";
+        }
+      });
 
-  const containerRect = container.getBoundingClientRect();
-  const handRect = selected.getBoundingClientRect();
-  const targetX = containerRect.left + containerRect.width / 2 - handRect.width / 2 - handRect.left;
+      // Highlight chosen hand
+      element.classList.add("selected");
 
-  hands.forEach(hand => {
-    if(hand !== selected) hand.classList.add('hidden');
-    else {
-      hand.classList.add('selected');
-      hand.style.transform += ` translateX(${targetX}px)`;
-      const windowCenterY = window.innerHeight / 2 - handRect.height / 2;
-      hand.style.top = windowCenterY - handRect.top + "px";
+      const choices = ["Rock", "Paper", "Scissors"];
+      const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+      let result = "";
+      if (userChoice === computerChoice) {
+        result = "It's a tie!";
+      } else if (
+        (userChoice === "Rock" && computerChoice === "Scissors") ||
+        (userChoice === "Paper" && computerChoice === "Rock") ||
+        (userChoice === "Scissors" && computerChoice === "Paper")
+      ) {
+        result = `Computer chose ${computerChoice}. You won!`;
+      } else {
+        result = `Computer chose ${computerChoice}. You lost!`;
+      }
+
+      resultDiv.textContent = result;
+      playAgainBtn.style.display = "inline-block";
+      clearInterval(timer); // stop timer when game ends
     }
-  });
 
-  const options = ['Rock', 'Paper', 'Scissors'];
-  const computerChoice = options[Math.floor(Math.random() * 3)];
-
-  let resultText = '';
-  if(playerChoice === computerChoice) resultText = "It's a tie!";
-  else if(
-    (playerChoice === 'Rock' && computerChoice === 'Scissors') ||
-    (playerChoice === 'Scissors' && computerChoice === 'Paper') ||
-    (playerChoice === 'Paper' && computerChoice === 'Rock')
-  ) resultText = "You won!";
-  else resultText = "You lost!";
-
-  document.getElementById('result').textContent = `Computer chose ${computerChoice}. ${resultText}`;
-  document.getElementById('playAgainBtn').style.display = 'inline-block';
-}
-
-// Reset Game
-function resetGame() {
-  const hands = document.querySelectorAll('.hand');
-  hands.forEach(hand => {
-    hand.classList.remove('hidden');
-    hand.classList.remove('selected');
-    hand.style.top = '0px';
-    hand.style.transform = 'scale(1)';
-  });
-  document.getElementById('result').textContent = '';
-  document.getElementById('playAgainBtn').style.display = 'none';
-  document.getElementById('startButton').style.display = 'block';
-  document.getElementById('gameContainer').style.display = 'none';
-  document.getElementById('timer').style.display = 'none';
-  clearInterval(timerInterval);
-}
-</script>
-
+    function resetGame() {
+      resultDiv.textContent = "";
+      playAgainBtn.style.display = "none";
+      document.querySelectorAll(".hand").forEach(h => {
+        h.style.display = "block";
+        h.classList.remove("selected");
+        h.style.pointerEvents = "auto";
+      });
+      startTimer();
+    }
+  </script>
 </body>
 </html>
 
